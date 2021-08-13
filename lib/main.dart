@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 
 import 'db.dart';
@@ -38,8 +37,8 @@ class RandomWords extends StatefulWidget {
 }
 
 class _RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
-  final _saved = <WordPair>{};
+  final _suggestions = <StartupName>[];
+  final _saved = <StartupName>{};
   final _biggerFont = const TextStyle(fontSize: 18.0);
   bool waitingForResponse = false;
 
@@ -66,7 +65,7 @@ class _RandomWordsState extends State<RandomWords> {
           return Container();
         }
       },
-      future: retrieveStoredWordPairs(),
+      future: retrieveStoredStartupNames(),
     );
   }
 
@@ -80,62 +79,58 @@ class _RandomWordsState extends State<RandomWords> {
           final index = i ~/ 2;
 
           if (index >= _suggestions.length - 50 || _suggestions.length == 0) {
-            addAllGeneratedWordPairs();
+            addAllGeneratedStartupNames();
           }
           return _buildRow(_suggestions[index]);
         });
   }
 
-  void processStartupNames(StartupName startupName) {
-    WordPair pair = WordPair(
-      startupName.firstWord,
-      startupName.secondWord,
-    );
-    _suggestions.add(pair);
+  void processStartupName(StartupName startupName) {
+    _suggestions.add(startupName);
     if (startupName.saved == 1) {
-      _saved.add(pair);
+      _saved.add(startupName);
     }
   }
 
-  Future<void> retrieveStoredWordPairs() async {
+  Future<void> retrieveStoredStartupNames() async {
     List<StartupName> startupNames = await names();
 
     if (_suggestions.length == 0) {
-      startupNames.forEach((name) => {processStartupNames(name)});
+      startupNames.forEach((name) => {processStartupName(name)});
     }
     if (_suggestions.length == 0) {
-      addAllGeneratedWordPairs();
+      addAllGeneratedStartupNames();
     }
   }
 
-  void addAllGeneratedWordPairs() async {
+  void addAllGeneratedStartupNames() async {
     if (!waitingForResponse) {
       waitingForResponse = true;
       List<StartupName> startupNames = await fetchStartupNames(100);
       setState(() {
-        startupNames.forEach((name) => insertName(name));
-        startupNames.forEach((name) => processStartupNames(name));
+        startupNames.forEach((name) =>
+            insertName(name).then((name) => processStartupName(name)));
       });
       waitingForResponse = false;
     }
   }
 
-  Widget _buildRow(WordPair pair) {
-    final alreadySaved = _saved.contains(pair);
+  Widget _buildRow(StartupName name) {
+    final alreadySaved = _saved.contains(name);
 
     return ListTile(
-      title: Text(pair.asPascalCase, style: _biggerFont),
+      title: Text(name.asPascalCase, style: _biggerFont),
       trailing: Icon(
         alreadySaved ? Icons.favorite : Icons.favorite_border,
         color: alreadySaved ? Colors.red : null,
       ),
       onTap: () {
         setState(() {
-          updateSaveStateForNameWith(pair.first, pair.second);
+          updateSaveStateForStartupName(name);
           if (alreadySaved) {
-            _saved.remove(pair);
+            _saved.remove(name);
           } else {
-            _saved.add(pair);
+            _saved.add(name);
           }
         });
       },
@@ -146,7 +141,7 @@ class _RandomWordsState extends State<RandomWords> {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          final tiles = _saved.map((WordPair pair) {
+          final tiles = _saved.map((StartupName pair) {
             return ListTile(
               title: Text(pair.asPascalCase, style: _biggerFont),
             );

@@ -23,7 +23,7 @@ Future<Database> createDatabase() async {
   );
 }
 
-Future<int> insertName(StartupName name) async {
+Future<StartupName> insertName(StartupName name) async {
   // Define a function that inserts names into the database
   // Get a reference to the database.
   final db = await createDatabase();
@@ -32,11 +32,13 @@ Future<int> insertName(StartupName name) async {
   // `conflictAlgorithm` to use in case the same name is inserted twice.
   //
   // In this case, replace any previous data.
-  return await db.insert(
+  int id = await db.insert(
     'names',
     name.toMap(),
     conflictAlgorithm: ConflictAlgorithm.replace,
   );
+
+  return await getName(id);
 }
 
 Future<List<StartupName>> names() async {
@@ -79,33 +81,9 @@ Future<StartupName> getName(int id) async {
   );
 }
 
-Future<StartupName> getNameWith(firstWord, secondWord) async {
-  // A method that retrieves a name from the names table.
-  // Get a reference to the database.
-  final db = await createDatabase();
-
-  // Query the table for a specific name.
-  final List<Map<String, dynamic>> map = await db.query(
-    'names',
-    where: 'first_word = ? AND second_word = ?',
-    whereArgs: [firstWord, secondWord],
-  );
-
-  // Convert the List<Map<String, dynamic>> into a List<Name>.
-  return StartupName(
-    id: map[0]['id'],
-    firstWord: map[0]['first_word'],
-    secondWord: map[0]['second_word'],
-    saved: map[0]['saved'],
-  );
-}
-
-Future<void> updateSaveStateForNameWith(firstWord, secondWord) async {
+Future<void> updateSaveStateForStartupName(StartupName name) async {
   // A method that updates the save state for a name.
   // Get a reference to the database.
-  final db = await createDatabase();
-
-  StartupName name = await getNameWith(firstWord, secondWord);
   name = StartupName(
     id: name.id,
     firstWord: name.firstWord,
@@ -114,12 +92,7 @@ Future<void> updateSaveStateForNameWith(firstWord, secondWord) async {
   );
 
   // Update the save state for a specific name.
-  await db.update(
-    'names',
-    name.toMap(),
-    where: 'first_word = ? AND second_word = ?',
-    whereArgs: [firstWord, secondWord],
-  );
+  await updateName(name);
 }
 
 Future<void> updateName(StartupName name) async {
@@ -134,20 +107,6 @@ Future<void> updateName(StartupName name) async {
     where: 'id = ?',
     // Pass the Name's id as a whereArg to prevent SQL injection.
     whereArgs: [name.id],
-  );
-}
-
-Future<void> deleteName(int id) async {
-  // Get a reference to the database.
-  final db = await createDatabase();
-
-  // Remove the Name from the database.
-  await db.delete(
-    'names',
-    // Use a `where` clause to delete a specific name.
-    where: 'id = ?',
-    // Pass the Name's id as a whereArg to prevent SQL injection.
-    whereArgs: [id],
   );
 }
 
@@ -184,5 +143,12 @@ class StartupName {
   @override
   String toString() {
     return 'Name{id: $id, first word: $firstWord, second word: $secondWord}, saved: $saved}';
+  }
+
+  String get asPascalCase {
+    return firstWord.substring(0, 1).toUpperCase() +
+        firstWord.substring(1) +
+        secondWord.substring(0, 1).toUpperCase() +
+        secondWord.substring(1);
   }
 }
