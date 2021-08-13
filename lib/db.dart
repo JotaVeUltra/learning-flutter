@@ -1,46 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
-
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-
-void main() async {
-  // Avoid errors caused by flutter upgrade.
-  // Importing 'package:flutter/widgets.dart' is required.
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Create a Name and add it to the names table
-  var teaHost = StartupName(
-    id: 0,
-    firstWord: 'tea',
-    secondWord: 'host',
-    saved: 0,
-  );
-
-  await insertName(teaHost);
-
-  // Now, use the method to retrieve all the names.
-  print(await names()); // Prints a list that include TeaHost.
-
-  // Update TeaHost's saved and save it to the database.
-  teaHost = StartupName(
-    id: teaHost.id,
-    firstWord: teaHost.firstWord,
-    secondWord: teaHost.secondWord,
-    saved: (teaHost.saved - 1).abs(),
-  );
-  await updateName(teaHost);
-
-  // Print the updated results.
-  print(await names()); // Prints TeaHost with saved 1.
-
-  // Delete TeaHost from the database.
-  await deleteName(teaHost.id!);
-
-  // Print the list of names (empty).
-  print(await names());
-}
 
 Future<Database> createDatabase() async {
   // Open the database and store the reference.
@@ -187,20 +148,6 @@ Future<void> deleteName(int id) async {
     where: 'id = ?',
     // Pass the Name's id as a whereArg to prevent SQL injection.
     whereArgs: [id],
-  );
-}
-
-Future<void> deleteNameByName(String first, String second) async {
-  // Get a reference to the database.
-  final db = await createDatabase();
-
-  // Remove the Name from the database.
-  await db.delete(
-    'names',
-    // Use a `where` clause to delete a specific name.
-    where: 'first_word = ? and second_word = ?',
-    // Pass the Name's name as a whereArg to prevent SQL injection.
-    whereArgs: [first, second],
   );
 }
 

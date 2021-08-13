@@ -5,8 +5,8 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 
-import 'db_test.dart';
-import 'request_test.dart';
+import 'db.dart';
+import 'request.dart';
 
 void main() async {
   // Avoid errors caused by flutter upgrade.
@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Startup Name Generator',
       theme: ThemeData(
         primaryColor: Colors.blue,
