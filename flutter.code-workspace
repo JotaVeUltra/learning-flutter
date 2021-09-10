@@ -4,5 +4,13 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.exclude": {
+			"**/.dart_tool": true,
+			"**/.flutter-plugins*": true,
+			"**/.idea": true,
+			"**/.packages": true,
+			"**/*.iml": true
+		}
+	}
 }
