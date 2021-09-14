@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:learning_flutter/db.dart';
 import 'package:learning_flutter/startup_name_generator_bloc.dart';
-
-import 'db.dart';
 
 class RandomWords extends StatefulWidget {
   const RandomWords({Key? key}) : super(key: key);

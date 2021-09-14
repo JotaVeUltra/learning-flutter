@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-
-import 'db.dart';
+import 'package:learning_flutter/db.dart';
 
 Future<List<StartupName>> fetchStartupNames(int numberOfNames) async {
   final int numberOfWords = numberOfNames * 2;
