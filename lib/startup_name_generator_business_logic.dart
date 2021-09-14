@@ -1,3 +1,0 @@
-class StartupNameGeneratorBloc {
-  StartupNameGeneratorBloc();
-}

@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:learning_flutter/startup_names_screen.dart';
+import 'package:learning_flutter/startup_name_generator_screen.dart';
 
 void main() async {
   // Avoid errors caused by flutter upgrade.
