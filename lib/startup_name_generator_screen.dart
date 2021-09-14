@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:learning_flutter/db.dart';
+import 'package:learning_flutter/models/StartupName.dart';
 import 'package:learning_flutter/startup_name_generator_bloc.dart';
 
 class RandomWords extends StatefulWidget {

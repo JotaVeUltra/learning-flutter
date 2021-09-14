@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:learning_flutter/db.dart';
+import 'package:learning_flutter/models/StartupName.dart';
 import 'package:learning_flutter/request.dart';
 
 class StartupNameGeneratorBloc {
